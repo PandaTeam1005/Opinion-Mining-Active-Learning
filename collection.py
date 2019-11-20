@@ -1,0 +1,1 @@
+#a collection item must have a propery text for the oracle to classif
