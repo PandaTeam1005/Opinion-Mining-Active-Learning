@@ -1,11 +1,11 @@
 #a collection item must have a propery text for the oracle to classif
-from hashlib import sha256
+
 class Collection:
     def join(self,new_elements):
         pass
     def remove(self,old_elements):
         pass
-    def len(self):
+    def __len__(self):
         pass
     def get_items(self,selected):
         pass
@@ -26,18 +26,21 @@ class Index_Collection(Collection):
         #index: index of data that belongs to the collection
         self.data = data
         self.items = set(indexs)
-        self.inverse_index = {data[i][0]:i for i in range(len(data))}
+        self.inverse_index = {tuple(data[i][0]):i for i in range(len(data))}
     
     def elements(self):
-        return [self.item_vector(self.data[i]) for i in self.items]
+        return [self.data[i][0] for i in self.items]
     
     def join(self,new_elements):
         #the type of new elemesent must_be [(vector,class)]
         
         new_elements_indx = self._inverse_indxs([elem[0] for elem in new_elements])
         self.items = self.items.union(new_elements_indx)
-        for i in new_elements:
-            self.data[i][2] = new_elements[2]
+        for i,(itm,_) in enumerate(new_elements):
+            j = self.inverse_index[tuple(itm)]
+            txt = self.item_text(itm)
+            self.data[j] = (itm,txt,new_elements[i][1])
+            
         #update the class
         
     
@@ -46,7 +49,7 @@ class Index_Collection(Collection):
         old_elements_indx = self._inverse_indxs([elem[0] for elem in old_elements])
         self.items = self.items.difference(old_elements_indx)
     
-    def len(self):
+    def __len__(self):
         return len(self.items)
 
     def get_items(self,selected):
@@ -56,11 +59,13 @@ class Index_Collection(Collection):
         return [self.data[i] if i in self.items else None for i in selected]
     
     def _inverse_indxs(self,elements):
-        return [self.inverse_index[e] for e in elements]
+        return [self.inverse_index[tuple(e)] for e in elements]
     
     def _item_prop(self,item,prop):
         if not type(item)==int:
-            item = self.inverse_index[item]
+            tpl_it = tuple(item)
+            print(type(tpl_it))
+            item = self.inverse_index[tpl_it]
         return self.data[item][prop]
 
     def item_vector(self,item):
