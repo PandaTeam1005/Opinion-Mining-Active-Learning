@@ -1,0 +1,7 @@
+.dist
+.vscode
+*.pyc
+*.pdf
+*.txt
+*.json
+__pycache__
